@@ -2,7 +2,6 @@
 using Auction.Domain.Interfaces.Repositories;
 using Auction.Infrastructure.Authentification;
 using Auction.Infrastructure.Persistence;
-using Auction.Infrastructure.Persistence.Factory;
 using Auction.Infrastructure.Persistence.Repositories;
 using Auction.Infrastructure.Persistence.Schedulers;
 using Microsoft.EntityFrameworkCore;
@@ -20,8 +19,6 @@ public static class InfrastructureExtensions
             {
                 options.UseNpgsql(configuration.GetConnectionString(nameof(AuctionDbContext)));
             });
-
-        services.AddSingleton<DbContextFactory>();
 
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IProductRepository, ProductRepository>();

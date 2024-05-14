@@ -1,20 +1,26 @@
 ﻿using Auction.Core.Enums;
-using Auction.Infrastructure.Persistence.Factory;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 namespace Auction.Infrastructure.Persistence.Schedulers;
 
-public class CheckProductStateService(DbContextFactory dbContextFactory) : BackgroundService
+public class CheckProductStateService(IServiceProvider serviceProvider) : BackgroundService
 {
-    private readonly DbContextFactory _factory = dbContextFactory;
+    private readonly IServiceProvider _serviceProvider = serviceProvider;
+
+    public async Task RunAsync(CancellationToken stoppingToken)
+    {
+        await ExecuteAsync(stoppingToken);
+    }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
+        await using var scope = _serviceProvider.CreateAsyncScope();
+        var context = scope.ServiceProvider.GetRequiredService<AuctionDbContext>();
+
         while (!stoppingToken.IsCancellationRequested)
         {
-            using var context = _factory.CreateDbContext();
-
             var expiredProducts = context.Products
                 .Where(x => x.EndTime <= DateOnly.FromDateTime(DateTime.UtcNow)
                     && x.State != ProductState.Sold && x.State != ProductState.Refused).Include(x => x.Bet);
@@ -39,7 +45,8 @@ public class CheckProductStateService(DbContextFactory dbContextFactory) : Backg
             }
 
             var preparingProducts = context.Products
-                .Where(x => x.StartTime > DateOnly.FromDateTime(DateTime.UtcNow));
+                .Where(x => x.StartTime > DateOnly.FromDateTime(DateTime.UtcNow)
+                    && x.State != ProductState.Preparing && x.State != ProductState.Refused);
 
             foreach (var product in preparingProducts)
             {
