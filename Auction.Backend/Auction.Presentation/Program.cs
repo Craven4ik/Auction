@@ -6,11 +6,16 @@ using Microsoft.AspNetCore.CookiePolicy;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Logging
-    .ClearProviders()
-    .AddConsole()
-    .AddDebug()
-    .SetMinimumLevel(LogLevel.Information);
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        policy.WithOrigins("http://localhost:3000", "https://localhost:3000");
+        policy.AllowAnyHeader();
+        policy.AllowAnyMethod();
+        policy.AllowCredentials();
+    });
+});
 
 builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection(nameof(JwtOptions)));
 
@@ -33,7 +38,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseCookiePolicy(new CookiePolicyOptions
 {
-    MinimumSameSitePolicy = SameSiteMode.Strict,
+    MinimumSameSitePolicy = SameSiteMode.None,
     HttpOnly = HttpOnlyPolicy.Always,
     Secure = CookieSecurePolicy.Always
 });
@@ -41,6 +46,8 @@ app.UseCookiePolicy(new CookiePolicyOptions
 app.UseAuthentication();
 
 app.UseAuthorization();
+
+app.UseCors();
 
 app.MapControllers();
 

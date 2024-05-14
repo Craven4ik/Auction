@@ -1,11 +1,13 @@
 ﻿using Auction.Application.Auth;
 using Auction.Domain.Interfaces.Repositories;
 using Auction.Infrastructure.Authentification;
-using Auction.Infrastructure.Persistence.Repositories;
 using Auction.Infrastructure.Persistence;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Configuration;
+using Auction.Infrastructure.Persistence.Factory;
+using Auction.Infrastructure.Persistence.Repositories;
+using Auction.Infrastructure.Persistence.Schedulers;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Auction.Infrastructure;
 
@@ -19,12 +21,15 @@ public static class InfrastructureExtensions
                 options.UseNpgsql(configuration.GetConnectionString(nameof(AuctionDbContext)));
             });
 
+        services.AddSingleton<DbContextFactory>();
+
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IProductRepository, ProductRepository>();
-        services.AddScoped<IBetRepository, BetRepository>();
 
         services.AddScoped<IJwtProvider, JwtProvider>();
         services.AddScoped<IPasswordHasher, PasswordHasher>();
+
+        services.AddHostedService<CheckProductStateService>();
 
         return services;
     }

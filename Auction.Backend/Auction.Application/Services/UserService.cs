@@ -22,6 +22,9 @@ public class UserService(IUserRepository userRepository, IPasswordHasher passwor
     {
         var user = await _userRepository.GetByEmail(email);
 
+        if (user == null)
+            throw new Exception("User not found");
+
         var result = _passwordHasher.Verify(password, user.PasswordHash);
 
         if (result == false)
@@ -31,4 +34,63 @@ public class UserService(IUserRepository userRepository, IPasswordHasher passwor
 
         return token;
     }
+
+    public async Task<UserEntity?> GetById(string token)
+    {
+        var id = _jwtProvider.GetUserIdFromToken(token);
+
+        if (Equals(id, Guid.Empty))
+            return null;
+
+        return await _userRepository.GetById(id);
+    }
+
+    public async Task UpdateBalance(string token, decimal amount)
+    {
+        var id = _jwtProvider.GetUserIdFromToken(token);
+
+        if (Equals(id, Guid.Empty))
+            return;
+
+        await _userRepository.UpdateBalance(id, amount);
+    }
+
+    public bool CheckToken(string token)
+        => _jwtProvider.CheckToken(token);
+
+    public async Task<bool> IsFreeEmail(string email)
+        => await _userRepository.IsFreeEmail(email);
+
+    public async Task<decimal> GetUserBalance(string token)
+    {
+        var id = _jwtProvider.GetUserIdFromToken(token);
+
+        if (Equals(id, Guid.Empty))
+            return 0;
+
+        return await _userRepository.GetUserBalance(id);
+    }
+
+    public async Task<decimal> GetFreeUserBalance(string token)
+    {
+        var id = _jwtProvider.GetUserIdFromToken(token);
+
+        if (Equals(id, Guid.Empty))
+            return 0;
+
+        return await (_userRepository.GetFreeUserBalance(id));
+    }
+
+    public async Task<string> GetUserName(Guid id)
+        => await _userRepository.GetUserName(id);
+
+    public bool CheckProductOwner(Guid id, string token)
+    {
+        var userId = _jwtProvider.GetUserIdFromToken(token);
+
+        return Guid.Equals(userId, id);
+    }
+
+    public Guid GetUserIdFromToken(string token)
+        => _jwtProvider.GetUserIdFromToken(token);
 }

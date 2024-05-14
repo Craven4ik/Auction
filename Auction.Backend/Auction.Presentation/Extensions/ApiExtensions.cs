@@ -1,4 +1,5 @@
 ﻿using Auction.Infrastructure.Authentification;
+using Auction.Presentation.Mappers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -7,11 +8,12 @@ namespace Auction.Presentation.Extensions;
 
 public static class ApiExtensions
 {
-    public static void AddApiAuthentication(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddApiAuthentication(this IServiceCollection services, IConfiguration configuration)
     {
         var jwtOptions = configuration.GetSection(nameof(JwtOptions)).Get<JwtOptions>();
 
         services
+            .AddAutoMapper(typeof(AuctionMappingProfile))
             .AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -26,7 +28,7 @@ public static class ApiExtensions
                     ValidateAudience = false,
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.SecretKey))
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions!.SecretKey))
                 };
 
                 options.Events = new JwtBearerEvents
@@ -41,5 +43,7 @@ public static class ApiExtensions
             });
 
         services.AddAuthorization();
+
+        return services;
     }
 }

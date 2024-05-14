@@ -4,12 +4,16 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Auction.Infrastructure.Persistence;
 
-public class AuctionDbContext(DbContextOptions<AuctionDbContext> options)
-    : DbContext(options)
+public class AuctionDbContext : DbContext
 {
     public DbSet<UserEntity> Users { get; set; }
     public DbSet<BetEntity> Bets { get; set; }
     public DbSet<ProductEntity> Products { get; set; }
+
+    public AuctionDbContext(DbContextOptions<AuctionDbContext> options) : base(options)
+    {
+        Database.EnsureCreated();
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

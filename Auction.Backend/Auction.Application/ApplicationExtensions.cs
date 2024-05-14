@@ -10,7 +10,6 @@ public static class ApplicationExtensions
     {
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IProductService, ProductService>();
-        services.AddScoped<IBetService, BetService>();
 
         return services;
     }

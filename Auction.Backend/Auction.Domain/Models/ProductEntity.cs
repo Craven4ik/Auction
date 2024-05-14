@@ -13,9 +13,10 @@ public class ProductEntity
     public BetEntity? Bet { get; set; }
     public string Name { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
+    public decimal BetStep { get; set; }
     public decimal StartPrice { get; set; } = 0;
     public decimal? BuyOutPrice { get; set; }
-    public DateTime StartTime { get; set; }
-    public DateTime EndTime { get; set; }
-    public ProductState State { get; set; }
+    public DateOnly StartTime { get; set; }
+    public DateOnly EndTime { get; set; }
+    public ProductState State { get; set; } = ProductState.Preparing;
 }

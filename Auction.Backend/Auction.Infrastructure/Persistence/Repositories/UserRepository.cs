@@ -34,6 +34,17 @@ public class UserRepository(AuctionDbContext auctionDbContext) : IUserRepository
         await _context.SaveChangesAsync();
     }
 
+    public async Task UpdateBalance(Guid id, decimal amount)
+    {
+        var user = await _context.Users.FirstOrDefaultAsync(x => x.Id.Equals(id));
+
+        if (user is not null)
+        {
+            user.Balance += amount;
+            await _context.SaveChangesAsync();
+        }
+    }
+
     public async Task Update(Guid id, string name, string email, string passwordHash, decimal balance)
         => await _context.Users
             .Where(x => x.Id.Equals(id))
@@ -47,4 +58,48 @@ public class UserRepository(AuctionDbContext auctionDbContext) : IUserRepository
         => await _context.Users
             .Where(x => x.Id.Equals(id))
             .ExecuteDeleteAsync();
+
+    public async Task<bool> IsFreeEmail(string email)
+    {
+        var user = await _context.Users.FirstOrDefaultAsync(x => x.Email.Equals(email));
+
+        if (user is not null)
+            return true;
+
+        return false;
+    }
+
+    public async Task<decimal> GetUserBalance(Guid id)
+    {
+        var user = await _context.Users.AsNoTracking().FirstOrDefaultAsync(x => x.Id.Equals(id));
+
+        if (user is not null)
+            return user.Balance;
+
+        return 0;
+    }
+
+    public async Task<decimal> GetFreeUserBalance(Guid id)
+    {
+        var user = await _context.Users.AsNoTracking().Include(x => x.Bets)
+            .FirstOrDefaultAsync(x => x.Id.Equals(id));
+
+        if (user is null)
+            return 0;
+
+        if (user.Bets.Count == 0)
+            return user.Balance;
+
+        return user.Balance - user.Bets.Sum(b => b.Offer);
+    }
+
+    public async Task<string> GetUserName(Guid id)
+    {
+        var user = await _context.Users.AsNoTracking().FirstOrDefaultAsync(x => x.Id.Equals(id));
+
+        if (user is not null)
+            return user.Name;
+
+        return string.Empty;
+    }
 }

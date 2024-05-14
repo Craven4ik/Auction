@@ -1,0 +1,56 @@
+.navbar {
+    display: flex;
+    justify-content: space-around;
+    /* padding: 20px; */
+    background-color: white;
+    border-bottom: 2px solid #000;
+    font-size: 20px;
+    font-weight: bold;
+    height: 80px;
+    margin: auto 0;
+}
+
+.navbar-left {
+    display: flex;
+    flex-direction: row;
+    cursor: pointer;
+}
+
+.navbar-name {
+    margin:  auto 40px;
+}
+
+.navbar-center {
+    display: block;
+    margin: auto 0;
+}
+
+.navbar-center:hover {
+    cursor: pointer;
+}
+
+.navbar-right {
+    margin: auto 0;
+    cursor: pointer;
+}
+
+.navbar-link {
+    display: block;
+    height: 100%;
+    text-decoration: none;
+    color: #000;
+}
+
+.navbar-logo {
+    margin: auto 0;
+    background-image: url('../../public/logo.jpg');
+    background-repeat: no-repeat;
+    background-position: right;
+    background-size: 80px 80px;
+    height: 80px;
+    width: 80px;
+}
+
+.hidden-part {
+    visibility: hidden;
+}

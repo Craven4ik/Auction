@@ -1,0 +1,105 @@
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.product-details {
+    display: flex;
+    width: 50%;
+    margin: 50px auto;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    border: black 2px solid;
+    border-radius: 15px;
+}
+
+.product-details-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.product-details-column {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    width: 300px;
+    padding: 0 20px;
+    box-sizing: border-box;
+}
+
+.footer {
+    margin-top: auto;
+}
+
+.failed-to-do-bet {
+    display: block;
+    width: 100%;
+    padding: 20px;
+    text-align: center;
+    color: red;
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.buttons-section {
+    display: flex;
+    width: 80%;
+}
+
+.bet-section {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.bet-info {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+}
+
+.bet-label {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.bet-input {
+    padding: 5px;
+}
+
+.bet-input::-webkit-inner-spin-button,
+.bet-input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.bet-section-btns {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+
+.bet-section-btn {
+    display: block;
+    width: 40%;
+    margin: 0 auto;
+    margin-top: 20px;
+    padding: 10px;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.bet-error-label {
+    color: red;
+    text-align: center;
+    margin-top: 20px;
+    font-size: 14px;
+}
